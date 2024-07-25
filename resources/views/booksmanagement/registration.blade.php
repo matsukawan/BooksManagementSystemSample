@@ -1,3 +1,8 @@
+<?php
+    $getdata
+
+?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -13,15 +18,21 @@
 </head>
 <body>
     <h1>書籍データの新規登録</h1>
-    <form action="/booksmanagement/registrationSuccess" method="post">
+    <form action="/booksmanagement/registration" method="post" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
+            <input type="text" name="show">
+            <input class="send" type="submit" value="情報を取得">
+        </div>
+    </form>
+        <form action="/booksmanagement/registrationSuccess" method="post">
+        <div class="mb-3">
             <label for="isbn" class="form-label">ISBN</label>
-            <input type="number" class="form-control" name="isbn" id="book_name" required>
+            <input type="number" class="form-control" name="isbn" id="isbn" required>
         </div>
         <div class="mb-3">
             <label for="book_name" class="form-label">書籍名</label>
-            <input type="text" class="form-control" name="book_name" id="book_name" required>
+            <input type="text" class="form-control" name="book_name" id="book_name" required autocomplete="book_name">
         </div>
         <div class="mb-3">
             <label for="author" class="form-label">著者名</label>

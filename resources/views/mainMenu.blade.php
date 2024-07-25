@@ -16,8 +16,6 @@
     @csrf
     <input type="text" name="search_word" required>
     <input type="submit" value="検索">
-    <td><a href="/booksmanagement/registration">登録</a></td>
-
   </form>
   <hr>
   <h3>一覧</h3>
@@ -44,14 +42,12 @@
         <td>{{ $record->num_of_books }}</td>
         <td>{{ $record->created_at }}</td>
         <td><a href="">詳細</a></td>
-        <td><a href="/booksmanagement/delete">削除</a></td>
-        
       </tr>
     @endforeach
   </table>
   <br>
   <br>
-  <a href="/">ログアウト</a>
+  <a href="/">Topページに戻る</a>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"></script>
 </body>

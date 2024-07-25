@@ -9,7 +9,7 @@
 <body>
     <h1>データの削除</h1>
     @if(isset($record))
-        <form action="/db/deleteSuccess.blade.php" method="post">
+        <form action="/booksmanagement/deleteSuccess" method="post">
         @csrf
         <input type="hidden" name="id" value="{{ $record->id }}" readonly><br>
         書籍ID{{  $record->id }}<br>
@@ -18,12 +18,12 @@
         出版社<input type="text" name="publiser" value="{{ $record->publiser}}" readonly>
         価格(税抜)<input type="number" name="price" value="{{ $record->price }}" readonly>
         <input type="submit" value="削除"><br>
-        <a href="/mainMenu.blade.php">一覧表示画面に戻る</a>
+        <a href="/booksmanagement/mainMenu">一覧表示画面に戻る</a>
         </form>
     @else
-    <form action="/db/delete.blade.php" method="post">
+    <form action="/booksmanagement/delete" method="post">
         @csrf
-        書籍ID<input type="number" name="id" required>
+        ISBN<input type="number" name="id" required>
         <input type="submit" value="登録データ表示">
     </form>
     @endif

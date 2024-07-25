@@ -8,5 +8,9 @@ Route::get('/', function () {
 });
 
 Route::get('/booksmanagement/mainMenu', [BooksManagementController::class, 'showMainMenu']);
+Route::post('/booksmanagement/registration', [BooksManagementController::class, 'postIsbn']);
 Route::get('/booksmanagement/registration', [BooksManagementController::class, 'create']);
-Route::post('/booksmanagement/registrationSuccess', [BooksManagementController::class, 'store']);
+Route::get('/booksmanagement/registrationSuccess', [BooksManagementController::class, 'store']);
+Route::post('/booksmanagement/deleteSuccess', [BooksManagementController::class, 'delete']);
+Route::get('/booksmanagement/delete', [BooksManagementController::class, 'erase']);
+Route::post('/booksmanagement/delete', [BooksManagementController::class, 'erase']);
