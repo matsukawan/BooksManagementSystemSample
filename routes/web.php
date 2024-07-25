@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BooksManagementController;
 
 Route::get('/', function () {
-    return view('/booksmanagement/mainMenu');
+    return view('index');
 });
 
 Route::get('/booksmanagement/mainMenu', [BooksManagementController::class, 'showMainMenu']);
