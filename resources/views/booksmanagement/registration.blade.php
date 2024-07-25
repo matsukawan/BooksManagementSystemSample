@@ -32,7 +32,7 @@
         </div>
         <div class="mb-3">
             <label for="book_name" class="form-label">書籍名</label>
-            <input type="text" class="form-control" name="book_name" id="book_name" required autocomplete="book_name">
+            <input type="text" class="form-control" name="book_name" id="book_name" required>
         </div>
         <div class="mb-3">
             <label for="author" class="form-label">著者名</label>
