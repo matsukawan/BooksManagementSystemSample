@@ -12,7 +12,10 @@
 
 <body>
   <h1>ログイン画面</h1>
-  <form action="/booksmanagement/mainMenu" method="GET">
+  @if ($errors->has('login_id'))
+    <span class="error">{{ $errors->first('login_id') }}</span>
+  @endif
+  <form action="/booksmanagement/login" method="POST">
     @csrf
     <input type="text" name="login_id" required><br>
     <input type="password" name="password" required><br>

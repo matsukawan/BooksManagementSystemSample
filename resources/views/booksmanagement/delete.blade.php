@@ -15,7 +15,7 @@
         書籍ID{{  $record->id }}<br>
         書籍名<input type="text"name="book_name" value="{{ $record->book_name}}"readonly><br>
         著者名<input type="text" name="author" value="{{ $record->author }}" readonly>
-        出版社<input type="text" name="publiser" value="{{ $record->publiser}}" readonly>
+        {{-- 出版社<input type="text" name="publiser" value="{{ $record->publiser}}" readonly> --}}
         価格(税抜)<input type="number" name="price" value="{{ $record->price }}" readonly>
         <input type="submit" value="削除"><br>
         <a href="/booksmanagement/mainMenu">一覧表示画面に戻る</a>

@@ -13,12 +13,11 @@
 <body>
     <h1>以下のデータを削除しました</h1>
     <table class="table">
-        <tr><th>書籍ID</th><th>書籍名</th><th>著者名</th><th>出版社</th><th>価格(税抜)</th><th></th></tr>
+        <tr><th>書籍ID</th><th>書籍名</th><th>著者名</th><th>価格(税抜)</th><th></th></tr>
         <tr>
             <td>{{ $id }}</td>
             <td>{{ $book_name }}</td>
             <td>{{ $author }}</td>
-            <td>{{ $publiser }}</td>
             <td>{{ $price }}</td>
         </tr>
     </table>

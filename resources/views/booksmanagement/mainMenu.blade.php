@@ -16,9 +16,14 @@
     @csrf
     <input type="text" name="search_word" required>
     <input type="submit" value="検索">
-    <td><a href="/booksmanagement/registration">登録</a></td>
-
   </form>
+  @if ($dep_id == 1)
+    <form action="/booksmanagement/registration" method="GET">
+      @csrf
+      <input type="hidden" name="book_id" value="{{ $dep_id }}">
+      <input type="submit" value="登録">
+    </form>
+  @endif
   <hr>
   <h3>一覧</h3>
   <table class="table">
@@ -43,15 +48,19 @@
         <td>{{ $record->isbn }}</td>
         <td>{{ $record->num_of_books }}</td>
         <td>{{ $record->created_at }}</td>
-        <td><a href="">詳細</a></td>
-        <td><a href="/booksmanagement/delete">削除</a></td>
-        
+        <td>
+          <form action="/booksmanagement/detailView" method="GET">
+            @csrf
+            <input type="hidden" name="book_id" value="{{ $record->id }}">
+            <input type="hidden" name="emp_name" value="{{ $emp_name }}">
+            {{-- <input type="hidden" name="emp_id" value="{{ $emp_id }}"> --}}
+            <input type="hidden" name="dep_id" value="{{ $dep_id }}">
+            <input type="submit" value="詳細">
+          </form>
+        </td>
       </tr>
     @endforeach
   </table>
-  <br>
-  <br>
-  <a href="/">ログアウト</a>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"></script>
 </body>
