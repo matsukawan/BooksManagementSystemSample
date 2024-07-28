@@ -53,7 +53,6 @@
     </div>
     <input type="submit" value="登録" class="btn btn-primary" formaction="/booksmanagement/registrationSuccess">
   </form>
-  <a href="/review/reviewCreate">review</a>
   <br>
   @if ($errors->any())
     <ul>

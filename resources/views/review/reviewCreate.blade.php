@@ -31,6 +31,7 @@
     <input type="hidden" name="emp_id" value="{{ $emp_id }}">
     <input type="hidden" name="book_id" value="{{ $book_id }}">
     <input type="hidden" name="emp_name" value="{{ $emp_name }}">
+    <input type="hidden" name="date" value="{{ date('Y年m月d日') }}">
     <div class="mb-3">
       <label for="rating" class="form-label">おすすめ度</label>
       <input type="number" name="rating" id="rating" required>

@@ -22,13 +22,17 @@
   @endif
 
   @if ($review_exist)
-    <form action="" method="GET">
+    <form action="/review/reviewUpdate" method="GET">
       @csrf
       <input type="hidden" name="book_id" value="{{ $book_id }}">
-      <input type="hidden" name="book_id" value="{{ $book_name }}">
-      <input type="hidden" name="book_id" value="{{ $author }}">
-      {{-- <input type="hidden" name="book_id" value="{{ $comment }}"> --}}
-      {{-- <input type="hidden" name="book_id" value="{{ $rating }}"> --}}
+      <input type="hidden" name="book_name" value="{{ $book_name }}">
+      <input type="hidden" name="author" value="{{ $author }}">
+      <input type="hidden" name="emp_id" value="{{ $emp_id }}">
+      <input type="hidden" name="emp_name" value="{{ $emp_name }}">
+      @foreach($reviews as $review)
+      <input type="hidden" name="comment" value="{{ $review->comment }}">
+      <input type="hidden" name="rating" value="{{ $review->rating }}">
+      @endforeach
       <input type="submit" value="レビュー編集">
     </form>
   @else

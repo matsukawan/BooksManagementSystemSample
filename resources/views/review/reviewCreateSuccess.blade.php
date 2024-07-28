@@ -15,7 +15,7 @@
 
   <table class="table1">
     <tr>
-      <th>本の表紙：{{ $book_name }}</th>     
+      <th>作品名：{{ $book_name }}</th>     
     </tr>
     <tr>
       <th>著者名：{{ $author }}</th>

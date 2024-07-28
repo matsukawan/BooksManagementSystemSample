@@ -7,22 +7,38 @@
 </head>
 <body>
     <h1>データの更新</h1>
-    @if(isset($record))
-        <form action="/db/update" method="post">
+        <form action="/review/reviewUpdateSuccess" method="post">
+            <input type="hidden" name="book_name" value="{{ $book_name }}">
+            <input type="hidden" name="author" value="{{ $author }}">
+            <input type="hidden" name="emp_name" value="{{ $emp_name }}">
+            <input type="hidden" name="emp_id" value="{{ $records -> emp_id }}">
+            <input type="hidden" name="book_id" value="{{ $records -> book_id }}">
             @csrf
-            //行頭に投稿番号{{ $record -> id }}を入力すれば表示可能
-            //投稿番号{{ $record -> id }}<input type="hidden" name="id" value="{{ $record -> id }}"><br>
-            <input type="hidden" name="id" value="{{ $record -> id }}"><br>
-            投稿者<input type="text" name="user_name" value="{{ $record -> user_name }}"><br>
-            投稿記事<textarea name="posted_item">{{ $record -> posted_item }}</textarea>
-            <input type="submit" value="更新">
+            <table class="table1">
+                <tr>
+                    <th>書籍名：{{ $book_name }}</th>
+                </tr>
+                <tr>
+                    <th>著者：{{ $author }}</th>
+                </tr>
+                <tr>
+                    <th>名前：{{ $emp_name }}</th>
+                </tr>
+                <tr>
+                    <th>社員ID：{{ $records -> emp_id }}</th>
+                </tr>
+                <tr>
+                    <th>書籍ID：{{ $records -> book_id }}</th>
+                </tr>
+            </table>
+            <div class="mb-3">
+                おすすめ度：<input type="number" name="rating" value="{{ $records -> rating }}" required>
+            </div>
+            <div class="mb-3">
+                コメント入力：<textarea name="comment" id="comment" cols="30" rows="10"  required>{{ $records -> comment }}</textarea>
+            </div>
+            <input type="submit" value="レビュー更新">
         </form>
-    @else
-        <form action="/db/edit" method="get">
-            @csrf
-            投稿番号<input type="number" name="id" required>
-            <input type="submit" value="データ表示">
-        </form>
-    @endif
+
 </body>
 </html>

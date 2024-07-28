@@ -15,7 +15,7 @@ class BooksManagementController extends Controller
     {
         $login_id = $req->login_id;
         $password = $req->password;
-        $employee = Employee::where('emp_id', '=', $login_id)->first();
+        $employee = Employee::where('emp_id', $login_id)->first();
 
         if (!isset($employee) || $password != $employee->password) {
             return back()->withErrors([
@@ -23,140 +23,79 @@ class BooksManagementController extends Controller
             ]);
         }
 
-        $emp_name = $employee->emp_name;
-        $emp_id = $employee->id; // ログインIDではなく社員ID
-        $dep_id = $employee->dep_id;
+        $req->session()->put('emp_id', $employee->id); // ログインIDではなく社員ID
+        $req->session()->put('emp_name', $employee->emp_name); //社員名
+        $req->session()->put('dep_id', $employee->dep_id); // 部署ID
 
-        $data = [
-            'emp_id' => $emp_id, // ログインIDではなく社員ID
-            'emp_name' => $emp_name,
-            'dep_id' => $dep_id
-        ];
-
-        // 社員名と部署IDをshowMainMenuにリダイレクト
-        return redirect()->action([BooksManagementController::class, 'showMainMenu'], $data);
+        // 社員IDと社員名、部署IDをshowMainMenuにリダイレクト
+        return redirect()->action([BooksManagementController::class, 'showMainMenu']);
     }
 
-    //メインメニュー表示
+    public function logout(Request $req)
+    {
+        $req->session()->flush();
+
+        return view('booksmanagement.logout');
+    }
+
+    // メインメニュー表示
     public function showMainMenu(Request $req)
     {
-        // booksのレコードを全件取得し、社員名と部署IDと併せてメインメニューに遷移
+        // booksテーブルのレコード全件、社員名、社員ID、部署IDを取得しメインメニューに遷移する
         $data = [
-            'records' => Book::All(),
-            'emp_name' => $req->emp_name,
-            'emp_id' => $req->emp_id,
-            'dep_id' => $req->dep_id
+            // 全件取得、ペジネート
+            'records' => Book::paginate(10),
+            'emp_id' => $req->session()->get('emp_id',),
+            'emp_name' => $req->session()->get('emp_name',),
+            'dep_id' => $req->session()->get('dep_id',)
         ];
 
         return view('booksmanagement.mainMenu', $data);
     }
-    public function reviewCreate(Request $req)
+
+    // ISBN、書籍名、著者名で検索する
+    public function showSearchResult(Request $req)
     {
-        $data = [
-            'book_id' => $req -> book_id,
-            'book_name' => $req -> book_name,
-            'author' => $req -> author,
-            'emp_id' => $req -> emp_id,
-            'emp_name' => $req -> emp_name
-        ];
-        
-        return view('review.reviewCreate',$data);
-    }
+        $key = $req->search_word;
 
-    public function reviewStore(Request $req)
-    {
-        $review = new Review();
-        $review->book_id = $req->book_id;
-        $review->emp_id = $req->emp_id;
-        $review->comment = $req->comment;
-        $review->rating = $req->rating;
+        // ISBNが入力された場合、'-'を削除して検索する
+        $isbn = str_replace('-', '', $key);
+        $records = Book::where('isbn', $isbn)->get();
+        if ($records->count() == 1) {
+            $data = [
+                'records' => $records,
+                'emp_id' => $req->session()->get('emp_id',),
+                'emp_name' => $req->session()->get('emp_name',),
+                'dep_id' => $req->session()->get('dep_id',)
+            ];
+        } else {
+            // ISBNの検索結果がなかった場合、書籍名か著者名で検索する
+            // 条件に一致するIDを取得するサブクエリを作成
+            $subQuery = Book::select('id')
+                ->where('book_name', 'LIKE', "%$key%")
+                ->orWhere('author', 'LIKE', "%$key%");
 
-        $review->save();
+            // サブクエリで取得したIDを使ってメインクエリを実行する
+            $records = Book::whereIn('id', $subQuery)->get();
 
-        $data = [
-            'book_name' => $req -> book_name,
-            'author' => $req -> author,
-            'emp_name' => $req -> emp_name,
-            'emp_id' => $req->emp_id,
-            'comment' => $req->comment,
-            'rating' => $req->rating,
-            'book_id' => $req->book_id,
-            'created_at' => $req->created_at
-        ];
-        return view('review.reviewCreateSuccess', $data);
-    }
-    public function reviewCreateSuccess(Request $req)
-    {
-        //$review = new Review();
-        //$book = new Book();
-        //$emp = new Employee();
-
-        //$book->book_name = $req->book_name;
-        //$book->author = $req->author;
-
-
-
-        //$review->rating = $req->rating;
-        //$review->comment = $req->comment;
-
-        //$emp->emp_name = $req->emp_name;
-
-        //$review->save();
-        // $review->save();
-        $review = Review::where('created_at')->first();
-
-        $data = [
-            'book_name' => $req->book_name,
-            'author' => $req->author,
-            'rating' => $req->rating,
-            'comment' => $req->comment,
-            'created_at' => $review,
-            'emp_name' => $req->emp_name
-        ];
-
-        return view('review.reviewCreateSuccess', $data);
-    }
-
-    //     return view('review.reviewUpdateSuccess');
-    // }
-
-    public function reviewUpdate(Request $req)
-    {
-        if($req -> isMethod('get')){ //メソッド(get/post)の種類を調べるメソッド
-            return view('db.edit'); //get通信の場合、そのままビューを表示
-        }else if($req -> isMethod('post')){
-		        $id = $req -> id;
-		        $data = [
-            'record' => Article::find($id)
-        ];
-		        return view('db.edit',$data); //post通信の場合、データを指定してビューを表示
-        }else{
-            redirect('/');
+            $data = [
+                'records' => $records,
+                'emp_id' => $req->session()->get('emp_id',),
+                'emp_name' => $req->session()->get('emp_name',),
+                'dep_id' => $req->session()->get('dep_id',)
+            ];
         }
+
+        return view('booksmanagement.searchResult', $data);
     }
 
-    public function reviewUpdateSuccess(Request $req) //データ更新用アクションメソッドの定義
-    {
-		    //更新対象のレコードをフォームからid値を元にモデルに取り出す
-        $article = Article::find($req -> id);
-        //フォームのデータをモデルに代入(上書き)
-        $article -> user_name = $req -> user_name;
-        $article -> posted_item = $req -> posted_item;
-        //モデルのデータをテーブルに保存(上書き)するメソッドを実行
-        $article -> save();
-        $data = [
-            'id' => $req -> id,
-            'user_name' => $req -> user_name,
-            'posted_item' => $req -> posted_item
-        ];
-        return view('db.update',$data);
-    }
-
+    // 詳細表示処理
     public function showDetail(Request $req)
     {
         $book = Book::where('id', '=', $req->book_id)->first();
-        $reviews = Review::where('book_id', '=', $req->book_id)->get();
-        $review_exist = $reviews->contains('emp_id', $req->emp_id);
+        // ペジネート
+        $reviews = Review::where('book_id', $req->book_id)->paginate(10);
+        $review_exist = $reviews->contains('emp_id', $req->session()->get('dep_id',));
 
         $data = [
             'book_id' => $book->id,
@@ -166,21 +105,88 @@ class BooksManagementController extends Controller
             'price' => $book->price,
             'isbn' => $book->isbn,
             'num_of_books' => $book->num_of_books,
-            'created_at' => $book->created_at,
-            'emp_name' => $req->emp_name,
-            'emp_id' => $req->emp_id,
-            'dep_id' => $req->dep_id,
+            'created_at' => date('Y年m月d日', strtotime($book->created_at)),
+            'emp_id' => $req->session()->get('emp_id',),
+            'emp_name' => $req->session()->get('emp_name',),
+            'dep_id' => $req->session()->get('dep_id',),
             'reviews' => $reviews,
             'review_exist' => $review_exist
         ];
 
-        
-
         return view('booksmanagement.detailView', $data);
+    }
+    public function reviewCreate(Request $req)
+    {
+        // $reviewCreate = Review::find($req -> emp_id);
+        // print_r($reviewCreate);
+        $data = [
+            'book_id'   => $req -> book_id,
+            'book_name' => $req -> book_name,
+            'author'    => $req -> author,
+            'emp_id'    => $req -> emp_id,
+            'emp_name'  => $req -> emp_name
+        ];
+        
+        return view('review.reviewCreate',$data);
+    }
+
+    public function reviewCreateSuccess(Request $req)
+    {
+        $review = new Review();
+        $review->book_id = $req->book_id;
+        $review->emp_id  = $req->emp_id;
+        $review->comment = $req->comment;
+        $review->rating  = $req->rating;
+
+        $review->save();
+
+        $data = [
+            'book_name'  => $req -> book_name,
+            'author'     => $req -> author,
+            'emp_name'   => $req -> emp_name,
+            'emp_id'     => $req->emp_id,
+            'comment'    => $req->comment,
+            'rating'     => $req->rating,
+            'book_id'    => $req->book_id,
+            'created_at' => $req->created_at
+        ];
+        return view('review.reviewCreateSuccess', $data);
+    }
+
+    public function reviewUpdate(Request $req)
+    {
+        $data = [
+            'records'   => Review::where('book_id','=',$req -> book_id)->where('emp_id','=',$req -> emp_id)->first(),
+            'book_name' => $req -> book_name,
+            'author'    => $req -> author,
+            'emp_name'  => $req -> emp_name,
+        ];
+
+        return view('/review/reviewUpdate',$data);       
+    }
+
+    public function reviewUpdateSuccess(Request $req)
+    {
+        $review = Review::where('book_id','=',$req -> book_id)->where('emp_id','=',$req -> emp_id)->first();
+        // print_r($review);
+        // dd($review);
+        $review -> rating = $req -> rating;
+        $review -> comment = $req -> comment;
+
+        $review -> save();
+
+        $data = [
+            'records'   => Review::where('book_id','=',$req -> book_id)->where('emp_id','=',$req -> emp_id)->first(),
+            'book_name' => $req -> book_name,
+            'author'    => $req -> author,
+            'emp_name'  => $req -> emp_name,
+        ];
+        return view('review.reviewupdateSuccess',$data);
     }
 
     public function postIsbn(Request $req)
     {
+        //$isbn = str_replace('-', '', $req);
         unset($req['_token']);
         $value = $req['isbn'];
 
@@ -190,7 +196,7 @@ class BooksManagementController extends Controller
             $base_url . $value,
             false,
         );
-        $result = json_decode($response, true);
+        $result  = json_decode($response, true);
         $getdata = $result[0]["summary"];
 
         return view('booksmanagement.registration', ['getdata' => $getdata]);
@@ -201,7 +207,7 @@ class BooksManagementController extends Controller
         return view('booksmanagement.registration');
     }
 
-    //データ登録処理用アクションメソッドの定義
+
     public function store(Request $req)
     {
         $input = $req->validate([
@@ -210,23 +216,23 @@ class BooksManagementController extends Controller
         ]);
 
 
-        $article = new Book(); //モデルのインスタンスを生成
-        //フォームのデータをプロパティに代入
-        $article->isbn = $req->isbn; //入力フォームからのデータ
-        $article->book_name = $req->book_name;     //入力フォームからのデータ
-        $article->author = $req->author; //入力フォームからのデータ
-        $article->publisher = $req->publisher; //入力フォームからのデータ
-        $article->price = $req->price; //入力フォームからのデータ
-        $article->num_of_books = $req->num_of_books; //入力フォームからのデータ
+        $article = new Book();
+
+        $article->isbn         = $req->isbn;
+        $article->book_name    = $req->book_name;
+        $article->author       = $req->author;
+        $article->publisher    = $req->publisher;
+        $article->price        = $req->price;
+        $article->num_of_books = $req->num_of_books;
         //テーブルにデータを保存するメソッドの実行
         $article->save();
         //登録したデータをビューに渡し、表示する
         $data = [
-            'isbn' => $req->isbn,
-            'book_name' => $req->book_name,
-            'author' => $req->author,
-            'publisher' => $req->publisher,
-            'price' => $req->price,
+            'isbn'         => $req->isbn,
+            'book_name'    => $req->book_name,
+            'author'       => $req->author,
+            'publisher'    => $req->publisher,
+            'price'        => $req->price,
             'num_of_books' => $req->num_of_books
         ];
         return view('booksmanagement.registrationSuccess', $data);
@@ -257,12 +263,12 @@ class BooksManagementController extends Controller
         //データを削除するメソッドを実行
         $books->delete();
         $data = [
-            'id' => $req->id,
-            'book_name' => $req->book_name,
-            'author' => $req->author,
-            'publisher' => $req->publisher,
-            'price' => $req->price,
-            'isbn' => $req->isbn,
+            'id'          => $req->id,
+            'book_name'   => $req->book_name,
+            'author'      => $req->author,
+            'publisher'   => $req->publisher,
+            'price'       => $req->price,
+            'isbn'        => $req->isbn,
             'num_of_book' => $req->num_of_book,
         ];
         return view('booksmanagement.deleteSuccess', $data);
