@@ -37,34 +37,55 @@ class BooksManagementController extends Controller
         return redirect()->action([BooksManagementController::class, 'showMainMenu'], $data);
     }
 
-    // メインメニュー表示
+    //メインメニュー表示
     public function showMainMenu(Request $req)
     {
         // booksのレコードを全件取得し、社員名と部署IDと併せてメインメニューに遷移
         $data = [
             'records' => Book::All(),
             'emp_name' => $req->emp_name,
+            'emp_id' => $req->emp_id,
             'dep_id' => $req->dep_id
         ];
 
         return view('booksmanagement.mainMenu', $data);
     }
-
     public function reviewCreate(Request $req)
     {
-        $book = new Book();
-        $book->book_name = $req->book_name;
-        $book->author = $req->author;
+        $data = [
+            'book_id' => $req -> book_id,
+            'book_name' => $req -> book_name,
+            'author' => $req -> author,
+            'emp_id' => $req -> emp_id,
+            'emp_name' => $req -> emp_name
+        ];
+        
+        return view('review.reviewCreate',$data);
+    }
 
-        //$book->save();
+    public function reviewStore(Request $req)
+    {
+        $review = new Review();
+        $review->book_id = $req->book_id;
+        $review->emp_id = $req->emp_id;
+        $review->comment = $req->comment;
+        $review->rating = $req->rating;
+
+        $review->save();
 
         $data = [
-            'book_name' => $req->book_name,
-            'author' => $req->author
+            'book_name' => $req -> book_name,
+            'author' => $req -> author,
+            'emp_name' => $req -> emp_name,
+            'emp_id' => $req->emp_id,
+            'comment' => $req->comment,
+            'rating' => $req->rating,
+            'book_id' => $req->book_id,
+            'created_at' => $req->created_at
         ];
-        return view('review.reviewCreate', $data);
+        return view('review.reviewCreateSuccess', $data);
     }
-    public function reviewUpdateSuccess(Request $req)
+    public function reviewCreateSuccess(Request $req)
     {
         //$review = new Review();
         //$book = new Book();
@@ -82,20 +103,54 @@ class BooksManagementController extends Controller
 
         //$review->save();
         // $review->save();
+        $review = Review::where('created_at')->first();
 
         $data = [
             'book_name' => $req->book_name,
             'author' => $req->author,
             'rating' => $req->rating,
             'comment' => $req->comment,
+            'created_at' => $review,
             'emp_name' => $req->emp_name
         ];
 
-        return view('review.reviewUpdateSuccess', $data);
+        return view('review.reviewCreateSuccess', $data);
     }
 
     //     return view('review.reviewUpdateSuccess');
     // }
+
+    public function reviewUpdate(Request $req)
+    {
+        if($req -> isMethod('get')){ //メソッド(get/post)の種類を調べるメソッド
+            return view('db.edit'); //get通信の場合、そのままビューを表示
+        }else if($req -> isMethod('post')){
+		        $id = $req -> id;
+		        $data = [
+            'record' => Article::find($id)
+        ];
+		        return view('db.edit',$data); //post通信の場合、データを指定してビューを表示
+        }else{
+            redirect('/');
+        }
+    }
+
+    public function reviewUpdateSuccess(Request $req) //データ更新用アクションメソッドの定義
+    {
+		    //更新対象のレコードをフォームからid値を元にモデルに取り出す
+        $article = Article::find($req -> id);
+        //フォームのデータをモデルに代入(上書き)
+        $article -> user_name = $req -> user_name;
+        $article -> posted_item = $req -> posted_item;
+        //モデルのデータをテーブルに保存(上書き)するメソッドを実行
+        $article -> save();
+        $data = [
+            'id' => $req -> id,
+            'user_name' => $req -> user_name,
+            'posted_item' => $req -> posted_item
+        ];
+        return view('db.update',$data);
+    }
 
     public function showDetail(Request $req)
     {
@@ -112,41 +167,32 @@ class BooksManagementController extends Controller
             'isbn' => $book->isbn,
             'num_of_books' => $book->num_of_books,
             'created_at' => $book->created_at,
+            'emp_name' => $req->emp_name,
             'emp_id' => $req->emp_id,
             'dep_id' => $req->dep_id,
             'reviews' => $reviews,
             'review_exist' => $review_exist
         ];
 
+        
+
         return view('booksmanagement.detailView', $data);
     }
 
     public function postIsbn(Request $req)
     {
-        // $proxy = array(
-        //     "http" => array(
-        //         "proxy" => "tcp://172.16.71.1:3128",
-        //         'request_fulluri' => true,
-        //     ),
-        // );
-        //$proxy_context = stream_context_create($proxy);
-
         unset($req['_token']);
-        $value = $req['show'];
+        $value = $req['isbn'];
 
         $base_url = 'https://api.openbd.jp/v1/get?isbn=';
 
         $response = file_get_contents(
             $base_url . $value,
             false,
-            //$proxy_context
         );
         $result = json_decode($response, true);
-        //$getdata = array("isbn" => "111","title" => "aaa","author" => "aaa","publisher" => "aaa",);
         $getdata = $result[0]["summary"];
 
-
-        //print_r($getdata);
         return view('booksmanagement.registration', ['getdata' => $getdata]);
     }
 

@@ -35,8 +35,10 @@
     <form action="/review/reviewCreate" method="GET">
       @csrf
       <input type="hidden" name="book_id" value="{{ $book_id }}">
-      <input type="hidden" name="book_id" value="{{ $book_name }}">
-      <input type="hidden" name="book_id" value="{{ $author }}">
+      <input type="hidden" name="book_name" value="{{ $book_name }}">
+      <input type="hidden" name="author" value="{{ $author }}">
+      <input type="hidden" name="emp_id" value="{{ $emp_id }}">
+      <input type="hidden" name="emp_name" value="{{ $emp_name }}">
       <input type="submit" value="レビュー投稿">
     </form>
   @endif
@@ -74,6 +76,7 @@
       </tr>
     @endforeach
   </table>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 </body>

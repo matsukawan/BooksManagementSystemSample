@@ -53,7 +53,7 @@
             @csrf
             <input type="hidden" name="book_id" value="{{ $record->id }}">
             <input type="hidden" name="emp_name" value="{{ $emp_name }}">
-            {{-- <input type="hidden" name="emp_id" value="{{ $emp_id }}"> --}}
+            <input type="hidden" name="emp_id" value="{{ $emp_id }}">
             <input type="hidden" name="dep_id" value="{{ $dep_id }}">
             <input type="submit" value="詳細">
           </form>
