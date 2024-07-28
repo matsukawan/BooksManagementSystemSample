@@ -32,7 +32,7 @@
                 </tr>
             </table>
             <div class="mb-3">
-                おすすめ度：<input type="number" name="rating" value="{{ $records -> rating }}" required>
+                おすすめ度：<input type="number" max="5" min="1" name="rating" value="{{ $records -> rating }}" required>
             </div>
             <div class="mb-3">
                 コメント入力：<textarea name="comment" id="comment" cols="30" rows="10"  required>{{ $records -> comment }}</textarea>

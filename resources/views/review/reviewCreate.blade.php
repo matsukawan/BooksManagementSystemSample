@@ -34,7 +34,7 @@
     <input type="hidden" name="date" value="{{ date('Y年m月d日') }}">
     <div class="mb-3">
       <label for="rating" class="form-label">おすすめ度</label>
-      <input type="number" name="rating" id="rating" required>
+      <input type="number" max="5" min="1" name="rating" id="rating" required>
     </div>
     <!-- <div class="mb-3">
       <label for="emp_name" class="emp_name">名前</label>
