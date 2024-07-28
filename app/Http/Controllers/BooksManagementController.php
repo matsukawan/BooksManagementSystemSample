@@ -133,10 +133,10 @@ class BooksManagementController extends Controller
     public function reviewCreateSuccess(Request $req)
     {
         $review = new Review();
-        $review->book_id = $req->book_id;
-        $review->emp_id  = $req->emp_id;
-        $review->comment = $req->comment;
-        $review->rating  = $req->rating;
+        $review->book_id = $req -> book_id;
+        $review->emp_id  = $req -> emp_id;
+        $review->comment = $req -> comment;
+        $review->rating  = $req -> rating;
 
         $review->save();
 
@@ -144,11 +144,11 @@ class BooksManagementController extends Controller
             'book_name'  => $req -> book_name,
             'author'     => $req -> author,
             'emp_name'   => $req -> emp_name,
-            'emp_id'     => $req->emp_id,
-            'comment'    => $req->comment,
-            'rating'     => $req->rating,
-            'book_id'    => $req->book_id,
-            'created_at' => $req->created_at
+            'emp_id'     => $req -> emp_id,
+            'comment'    => $req -> comment,
+            'rating'     => $req -> rating,
+            'book_id'    => $req -> book_id,
+            'created_at' => $req -> created_at
         ];
         return view('review.reviewCreateSuccess', $data);
     }
@@ -170,7 +170,7 @@ class BooksManagementController extends Controller
         $review = Review::where('book_id','=',$req -> book_id)->where('emp_id','=',$req -> emp_id)->first();
         // print_r($review);
         // dd($review);
-        $review -> rating = $req -> rating;
+        $review -> rating  = $req -> rating;
         $review -> comment = $req -> comment;
 
         $review -> save();
@@ -210,7 +210,7 @@ class BooksManagementController extends Controller
 
     public function store(Request $req)
     {
-        $input = $req->validate([
+        $input = $req -> validate([
             //'book_name' => 'unique:books,NULL',
             'isbn' => 'unique:books,NULL'
         ]);
@@ -218,22 +218,22 @@ class BooksManagementController extends Controller
 
         $article = new Book();
 
-        $article->isbn         = $req->isbn;
-        $article->book_name    = $req->book_name;
-        $article->author       = $req->author;
-        $article->publisher    = $req->publisher;
-        $article->price        = $req->price;
-        $article->num_of_books = $req->num_of_books;
+        $article -> isbn         = $req -> isbn;
+        $article -> book_name    = $req -> book_name;
+        $article -> author       = $req -> author;
+        $article -> publisher    = $req -> publisher;
+        $article -> price        = $req -> price;
+        $article -> num_of_books = $req -> num_of_books;
         //テーブルにデータを保存するメソッドの実行
         $article->save();
         //登録したデータをビューに渡し、表示する
         $data = [
-            'isbn'         => $req->isbn,
-            'book_name'    => $req->book_name,
-            'author'       => $req->author,
-            'publisher'    => $req->publisher,
-            'price'        => $req->price,
-            'num_of_books' => $req->num_of_books
+            'isbn'         => $req -> isbn,
+            'book_name'    => $req -> book_name,
+            'author'       => $req -> author,
+            'publisher'    => $req -> publisher,
+            'price'        => $req -> price,
+            'num_of_books' => $req -> num_of_books
         ];
         return view('booksmanagement.registrationSuccess', $data);
     }
@@ -243,8 +243,8 @@ class BooksManagementController extends Controller
         //get通信の場合
         if ($req->isMethod('get')) {
             return view(('booksmanagement.delete'));
-        } else if ($req->isMethod('post')) {
-            $id = $req->id;
+        } else if ($req -> isMethod('post')) {
+            $id = $req -> id;
             $data = [
                 //入力されたid値のデータを取得
                 'record' => Book::find($id)
@@ -259,17 +259,17 @@ class BooksManagementController extends Controller
     //データ削除用アクションメソッドの定義
     {
         //削除対象のレコードをフォームからのid値を元にモデルに取り出す
-        $books = Book::find($req->id);
+        $books = Book::find($req -> id);
         //データを削除するメソッドを実行
-        $books->delete();
+        $books -> delete();
         $data = [
-            'id'          => $req->id,
-            'book_name'   => $req->book_name,
-            'author'      => $req->author,
-            'publisher'   => $req->publisher,
-            'price'       => $req->price,
-            'isbn'        => $req->isbn,
-            'num_of_book' => $req->num_of_book,
+            'id'          => $req -> id,
+            'book_name'   => $req -> book_name,
+            'author'      => $req -> author,
+            'publisher'   => $req -> publisher,
+            'price'       => $req -> price,
+            'isbn'        => $req -> isbn,
+            'num_of_book' => $req -> num_of_book,
         ];
         return view('booksmanagement.deleteSuccess', $data);
     }
