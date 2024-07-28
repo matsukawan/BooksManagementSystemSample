@@ -140,15 +140,23 @@ class BooksManagementController extends Controller
 
         $review->save();
 
+        switch($review -> rating){
+            case 1: $pointStar = '★☆☆☆☆'; break;
+            case 2: $pointStar = '★★☆☆☆'; break;
+            case 3: $pointStar = '★★★☆☆'; break;
+            case 4: $pointStar = '★★★★☆'; break;
+            case 5: $pointStar = '★★★★★'; break;
+        };
+
         $data = [
             'book_name'  => $req -> book_name,
             'author'     => $req -> author,
             'emp_name'   => $req -> emp_name,
             'emp_id'     => $req -> emp_id,
             'comment'    => $req -> comment,
-            'rating'     => $req -> rating,
+            'rating'     => $pointStar,
             'book_id'    => $req -> book_id,
-            'created_at' => $req -> created_at
+            'created_at' => $req -> created_at,
         ];
         return view('review.reviewCreateSuccess', $data);
     }
