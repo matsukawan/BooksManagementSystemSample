@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>書籍データの新規登録</title>
+  <link rel="stylesheet" href="../css/main.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
   <style>
@@ -17,7 +18,7 @@
 </head>
 
 <body>
-  <h1>書籍データの新規登録</h1>
+  <h1 class="text-center">書籍データの新規登録</h1>
 
   <!-- <form action="/booksmanagement/registration" method="post" enctype="multipart/form-data">
     @csrf
@@ -28,8 +29,8 @@
     @csrf
     <div class="mb-3">
       <label for="isbn" class="form-label">ISBN</label>
-      <input type="number" class="form-control" name="isbn" id="isbn" value="{{!isset($getdata) ? $getdata['isbn'] = '' : $getdata['isbn']}}" required>
-      <input class="send" type="submit" value="情報を取得" formaction="/booksmanagement/registration">
+      <input type="number" class="form-control" name="isbn" id="isbn" placeholder="isbn" value="{{!isset($getdata) ? $getdata['isbn'] = '' : $getdata['isbn']}}" required>
+      <input class="btn btn-secondary" type="submit" value="情報を取得" formaction="/booksmanagement/registration" formnovalidate>
     </div>
     <div class="mb-3">
       <label for="book_name" class="form-label">書籍名</label>
@@ -45,13 +46,13 @@
     </div>
     <div class="mb-3">
       <label for="price" class="form-label">価格(税抜)</label>
-      <input type="number" class="form-control" name="price" id="price"></textarea>
+      <input type="number" class="form-control" name="price" id="price" required></textarea>
     </div>
     <div class="mb-3">
       <label for="num_of_books" class="form-label">冊数</label>
-      <input type="number" class="form-control" name="num_of_books" id="num_of_books">
+      <input type="number" class="form-control" name="num_of_books" id="num_of_books" required>
     </div>
-    <input type="submit" value="登録" class="btn btn-primary" formaction="/booksmanagement/registrationSuccess">
+    <input type="submit" value="登録" class="btn btn-secondary" formaction="/booksmanagement/registrationSuccess">
   </form>
   <br>
   @if ($errors->any())

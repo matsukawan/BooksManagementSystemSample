@@ -214,7 +214,7 @@ class BooksManagementController extends Controller
             //'book_name' => 'unique:books,NULL',
             'isbn' => 'unique:books,NULL'
         ]);
-
+    
 
         $article = new Book();
 
